@@ -1,0 +1,10 @@
+﻿  pages.cpp
+c:\users\женя\source\repos\pages\pages\pages.cpp(172): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\женя\source\repos\pages\pages\pages.cpp(180): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\женя\source\repos\pages\pages\pages.cpp(193): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\женя\source\repos\pages\pages\pages.cpp(173): warning C4477: "printf": в строке форматирования "%*d" требуется аргумент типа "int", но вариативный аргумент "2" имеет тип "Frame"
+  c:\users\женя\source\repos\pages\pages\pages.cpp(173): note: этот аргумент используется описателем преобразования
+c:\users\женя\source\repos\pages\pages\pages.cpp(174): warning C4477: "fprintf": в строке форматирования "%*d" требуется аргумент типа "int", но вариативный аргумент "2" имеет тип "Frame"
+  c:\users\женя\source\repos\pages\pages\pages.cpp(174): note: этот аргумент используется описателем преобразования
+  pages.vcxproj -> c:\Users\Женя\source\repos\pages\Debug\pages.exe
+  pages.vcxproj -> c:\Users\Женя\source\repos\pages\Debug\pages.pdb (Partial PDB)

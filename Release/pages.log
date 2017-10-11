@@ -1,0 +1,13 @@
+﻿  stdafx.cpp
+  pages.cpp
+pages.cpp(180): warning C4018: <: несоответствие типов со знаком и без знака
+pages.cpp(186): warning C4018: <: несоответствие типов со знаком и без знака
+pages.cpp(195): warning C4018: <: несоответствие типов со знаком и без знака
+pages.cpp(181): warning C4477: "printf": в строке форматирования "%*d" требуется аргумент типа "int", но вариативный аргумент "2" имеет тип "Frame"
+  pages.cpp(181): note: этот аргумент используется описателем преобразования
+pages.cpp(170): warning C4101: framep: неиспользованная локальная переменная
+  Создание кода
+  All 176 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
+  pages.vcxproj -> c:\Users\Женя\source\repos\pages\Release\pages.exe
+  pages.vcxproj -> c:\Users\Женя\source\repos\pages\Release\pages.pdb (Full PDB)
