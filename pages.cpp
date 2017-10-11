@@ -8,47 +8,49 @@
 #include <stdlib.h>
 #include <time.h>
 #include <fstream>
+#include <algorithm>
 #include "pages.h"
 
-int num_frames = 4; // Number of avaliable pages in page tables
-int page_ref_upper_bound = 8; // Largest page reference
-int max_page_calls = 1000; // Max number of page refs to test
-int last_page_ref = -1; // Last ref
+int framesInMemory = 4;
+int maxPageReference = 8;
+int pagesCalls = 1000;
+int prevPageReference = -1;
 int hits = 0;
 int misses = 0;
 FILE *logfile = fopen("logfile.txt", "w");
 Frame *clock_hand = NULL;
 
 int main() {
-	for (int i = 0; i < num_frames; ++i) {
+	for (int i = 0; i < framesInMemory; ++i) {
 		table.push_back(createEmptyFrame(i));
 	}
 
 	genRefs();
 
-	for (int i = 0; i < max_page_calls; i++) {
+	for (int i = 0; i < pagesCalls; i++) {
 		get(getRef());
 	}
 
 	showSummary();
 
+
 	fclose(logfile);
-	system("pause");
+	// system("pause");
 	return 0;
 }
 
 
 void genRefs() {
-	for (int i = 0; i < max_page_calls; i++) {
+	for (int i = 0; i < pagesCalls; i++) {
 		pages.push_back(genPage());
 	}
 
 	return;
 }
 
-Page_Ref genPage() {
-	Page_Ref page;
-	page.page_num = rand() % page_ref_upper_bound;
+PageReference genPage() {
+	PageReference page;
+	page.page_num = rand() % maxPageReference;
 	return page;
 }
 
@@ -62,53 +64,58 @@ Frame createEmptyFrame(int index) {
 }
 
 int getRef() {
-	if (!pages.empty()) { // pop Page_Ref off page_refs
+	if (!pages.empty()) {
 		int page_num = pages.begin()->page_num;
 		pages.erase(pages.begin());
 
 		return page_num;
 	}
 	else {
-		return rand() % page_ref_upper_bound;
+		return rand() % maxPageReference;
 	}
 }
 
-void get(int page_ref) {
+void get(int pageReference) {
 
-	last_page_ref = page_ref;
+	prevPageReference = pageReference;
 	clockAlgoSimulation();
-	showStats();
+
+	showSummary();
+	showMem();
 }
 
 void toSwap(Frame *frame) {
 
-	printf("Page index: %d, Page: %d\n", frame->index, frame->page);
+	printf("To swap: page index: %d, page: %d\n", frame->index, frame->page);
+	fprintf(logfile, "To swap: page index: %d, page: %d\n", frame->index, frame->page);
 
 	Frame victim;
 	victim = *frame;
 	victim.index = 1;
+
 	reverse(victims.begin(), victims.end());
 	victims.push_back(victim);
 	reverse(victims.begin(), victims.end());
 }
 
 void clockAlgoSimulation() {
-	
+
 	Frame *framep = &table[0];
 
 	int fault = 0;
 	int ind = 1;
-	/* Find target (hit), empty page slot (miss), or victim to evict (miss) */
-	while (framep != NULL && framep->page > -1 && framep->page != last_page_ref) {
-		if (ind == num_frames)
+
+	while (framep != NULL && framep->page > -1 && framep->page != prevPageReference) {
+		if (ind == framesInMemory)
 			framep = NULL;
 		else
 			framep = &table[ind++];
 	}
 
+
 	if (framep != NULL) {
 		if (framep->page == -1) {
-			framep->page = last_page_ref;
+			framep->page = prevPageReference;
 			framep->r_bit = 0;
 			fault = 1;
 		}
@@ -124,7 +131,7 @@ void clockAlgoSimulation() {
 			else {
 				clock_hand->r_bit = 1;
 
-				if (clock_hand->index == num_frames - 1) {
+				if (clock_hand->index == framesInMemory - 1) {
 					clock_hand = NULL;
 				} else {
 					clock_hand = &table[clock_hand->index + 1];
@@ -134,7 +141,7 @@ void clockAlgoSimulation() {
 
 		toSwap(clock_hand);
 
-		clock_hand->page = last_page_ref;
+		clock_hand->page = prevPageReference;
 		clock_hand->r_bit = 0;
 
 		fault = 1;
@@ -148,34 +155,26 @@ void clockAlgoSimulation() {
 
 void showStats() {
 	showSummary();
-	showList();
+	showMem();
 }
 
 void showSummary() {
-	printf("Frames in Mem: %d, ", num_frames);
+	printf("Frames in Mem: %d, ", framesInMemory);
 	printf("Hits: %d, ", hits);
 	printf("Misses: %d, ", misses);
 	printf("Hit Persent: %f\n", (double)hits / (double)(hits + misses));
 
-	fprintf(logfile, "Frames in Mem: %d, ", num_frames);
+	fprintf(logfile, "Frames in Mem: %d, ", framesInMemory);
 	fprintf(logfile, "Hits: %d, ", hits);
 	fprintf(logfile, "Misses: %d, ", misses);
 	fprintf(logfile, "Hit Persent: %f\n", (double)hits / (double)(hits + misses));
 }
 
-void showList() {
+void showMem() {
 	int colsize = 9;
-	
-	printf("%-*s: ", 9, "Page #");
-	fprintf(logfile, "%-*s: ", 9, "Page #");
 
-	for (int i(0); i < table.size(); i++) {
-		printf("%*d", colsize, table[i]);
-		fprintf(logfile, "%*d", colsize, table[i]);
-	}
-
-	printf("\n%-*s: ", 9, "Page Ref");
-	fprintf(logfile, "\n%-*s: ", 9, "Page Ref");
+	printf("\n%-*s: ", 13, "Pages in mem");
+	fprintf(logfile, "\n%-*s: ", 13, "Pages in mem");
 
 	for (int i(0); i < table.size(); i++) {
 		if (table[i].page == -1) {
@@ -187,8 +186,8 @@ void showList() {
 		}
 	}
 
-	printf("\n%-*s: ", 9, "R");
-	fprintf(logfile, "\n%-*s: ", 9, "R");
+	printf("\n%-*s: ", 13, "R");
+	fprintf(logfile, "\n%-*s: ", 13, "R");
 
 	for (int i(0); i < table.size(); i++) {
 		printf("%*d", colsize, table[i].r_bit);
@@ -198,4 +197,3 @@ void showList() {
 	printf("\n\n");
 	fprintf(logfile, "\n\n");
 }
-

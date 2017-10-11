@@ -2,44 +2,33 @@
 #include <vector>
 using namespace std;
 
-// List for page tables and victim lists
-//LIST_HEAD(Page_Ref_List, Page_Ref) page_refs;
-// List for page tables and victim lists
-//LIST_HEAD(Frame_List, Frame);
 
 
-// stuct to hold Frame info
-typedef struct Page_Ref {
-//	LIST_ENTRY(Page_Ref) pages;
-	
+typedef struct PageReference {
+
 	int page_num;
-} Page_Ref;
-
+} PageReference;
 
 
 typedef struct Frame {
-//	LIST_ENTRY(Frame) frames;
 	int index;
-	int page; // page frame points to, -1 is empty
+	int page; // page frame pointer
 	int r_bit; // R bit
 } Frame;
-vector<Frame> frames;
-//	struct Frame_List victim_list; // List to hold frames that were replaced in page table
+
 vector<Frame> victims;
 
-//	struct Frame_List page_table; // List to hold frames in page table
 vector<Frame> table;
-vector<Page_Ref> pages;
+vector<PageReference> pages;
 
 void genRefs();
-Page_Ref genPage();
+PageReference genPage();
 Frame createEmptyFrame(int index);
-void get(int page_ref); // page with page ref
-int getRef(); // get next page ref however you like
-void toSwap(struct Frame *frame); // add victim frame to a victim list
+void get(int PageReference);
+int getRef();
+void toSwap(Frame *frame);
 
-void showList();
-void showStats();
+void showMem();
 void showSummary();
 
 void clockAlgoSimulation();
